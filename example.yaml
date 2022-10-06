@@ -1,0 +1,13 @@
+{
+  "tns_name": "20220725A",
+  "dm": 656,
+  "sn": 50,
+  "width": 5,
+  "search_path": "example_search.png",
+  "image_path" : "example_image.png",
+  "histogram_path": "example_histogram.png",
+  "ra_hms": "1h10m22.10670424s",
+  "ra_unc": 0.32874885005272164,
+  "dec_hms": "-70d48m40.50467718",
+  "dec_unc": 0.409720149,
+}
