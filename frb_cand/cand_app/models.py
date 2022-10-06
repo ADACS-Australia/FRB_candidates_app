@@ -1,7 +1,7 @@
 from django.db import models
 
 class FRBEvent(models.Model):
-    pk = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     tns_name = models.CharField(max_length=64, blank=True, null=True, help_text="The name of the FRB from the Transient naming system.")
     dm = models.FloatField(blank=True, null=True, verbose_name="Dispersion Measure (pc cm^-3)")
     sn = models.FloatField(blank=True, null=True, verbose_name="Signal to noise ratio")
@@ -26,7 +26,7 @@ POS_SOURCE_CHOICES = (
 class Position(models.Model):
     frb = models.ForeignKey(
         FRBEvent,
-        to_field="pk",
+        to_field="id",
         verbose_name="FRB Event",
         help_text="FRB event this position describes.",
         on_delete=models.CASCADE,
