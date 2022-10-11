@@ -105,7 +105,6 @@ def position_upload(id, yaml_path, source="MB"):
         data=data,
     )
     # Return the event id that was just created
-    print(r.status)
     return r
 
 
@@ -131,3 +130,4 @@ if __name__ == '__main__':
 
     frb_event_id =  frbevent_upload(args.yaml)
     position_upload(frb_event_id, args.yaml, source="MB")
+    position_upload(frb_event_id, args.yaml, source="HT")

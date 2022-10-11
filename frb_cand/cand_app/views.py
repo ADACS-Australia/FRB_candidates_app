@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.core.paginator import Paginator, InvalidPage
+from django.core.serializers.json import DjangoJSONEncoder
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,6 +9,7 @@ from rest_framework.response import Response
 
 from . import models, serializers
 
+import json
 import logging
 logger = logging.getLogger(__name__)
 
@@ -56,3 +59,22 @@ def position_create(request):
     logger.debug(request.data)
     logger.error(position.errors)
     return Response(position.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def FRBEvent_table(request):
+    # Grab events
+    frb_events = models.FRBEvent.objects.all()
+    frb_dict = list(frb_events.values())
+
+    # Annotate the pointings for each event
+    for frb in frb_dict:
+        positions = models.Position.objects.filter(frb__id=frb["id"])
+        frb["positions"] = list(positions.values())
+
+    # Convert to json
+    frb_json = json.dumps(frb_dict, cls=DjangoJSONEncoder)
+
+    content = {
+        "frb_json": frb_json,
+    }
+    return render(request, 'cand_app/frbevent_table.html', content)

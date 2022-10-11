@@ -24,4 +24,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('frbevent_create/', views.frbevent_create),
     path('position_create/', views.position_create),
+    path('frbevent_table/', views.FRBEvent_table),
 ]

@@ -1,0 +1,101 @@
+{% extends 'cand_app/navbar.html' %}
+
+{% block content %}
+<title>FRB Event Table</title>
+<div class="container-fluid">
+  <h1>FRB Event Table</h1>
+
+  <table id="expandable" class="display">
+    <thead>
+      <tr>
+        <th></th>
+        <th>ID</th>
+        <th>TNS name</th>
+        <th>DM</th>
+        <th>SN</th>
+        <th>Width</th>
+      </tr>
+    </thead>
+    <!-- {% for object in frb_events %}
+    <tr>
+      <td>  </td>
+      <td> {{ object.id }} </td>
+      <td> {{ object.tns_name }} </td>
+      <td> {{ object.dm }} </td>
+      <td> {{ object.sn }} </td>
+      <td> {{ object.width }} </td>
+    </tr>
+    {% endfor %} -->
+  </table>
+
+  {% include "cand_app/pagination.html" %}
+</div>
+
+<script type="text/javascript">
+  /* Function for child row details*/
+  function getChildRow(data) {
+    // `data` is the data object for the row
+    var child_table = '<table cellpadding="5" cellspacing="0" style="padding-left:50px;">'
+      '<thead><tr>' +
+        '<td>RA</td>' +
+        '<td>RA Unc</td>' +
+        '<td>Dec</td>' +
+        '<td>Dec Unc</td>' +
+        '<td>Source</td>' +
+      '</tr></thead>';
+    // Loop over each position and add it to the table
+    console.log("positions: ")
+    console.log(data.positions)
+    for (var i = 0; i < data.positions.length; i++){
+      console.log("pos: ")
+      console.log(data.positions[i])
+      child_table +=
+      '<tr>' +
+        '<td>' + data.positions[i].ra_hms + '</td>' +
+        '<td>' + data.positions[i].ra_pos_error + '</td>' +
+        '<td>' + data.positions[i].dec_dms + '</td>' +
+        '<td>' + data.positions[i].dec_pos_error + '</td>' +
+        '<td>' + data.positions[i].source + '</td>' +
+      '</tr>';
+    }
+    return child_table + '</table>';
+  }
+  $(document).ready(function () {
+    console.log('{{ frb_json | safe }}')
+    var json = JSON.parse('{{ frb_json | safe }}');
+    console.log(json)
+    var table = $('#expandable').DataTable({
+      data: json,
+      columns: [
+        {
+          className: 'dt-control',
+          orderable: false,
+          data: null,
+          defaultContent: '',
+        },
+        { data: 'id' },
+        { data: 'tns_name' },
+        { data: 'dm' },
+        { data: 'width' },
+      ],
+      order: [[1, 'asc']],
+    });
+
+    // Add event listener for opening and closing details
+    $('#expandable tbody').on('click', 'td.dt-control', function () {
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+
+      if (row.child.isShown()) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+      } else {
+        // Open this row
+        row.child(getChildRow(row.data())).show();
+        tr.addClass('shown');
+      }
+    });
+  });
+</script>
+{% endblock %}
