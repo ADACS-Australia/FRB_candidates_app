@@ -11,6 +11,12 @@
         <th></th>
         <th>ID</th>
         <th>TNS name</th>
+        <th>RA</th>
+        <th>RA Unc</th>
+        <th>Dec</th>
+        <th>Dec Unc</th>
+        <th>Source</th>
+        <th>Datetime</th>
         <th>DM</th>
         <th>SN</th>
         <th>Width</th>
@@ -27,38 +33,33 @@
     </tr>
     {% endfor %} -->
   </table>
-
-  {% include "cand_app/pagination.html" %}
 </div>
 
 <script type="text/javascript">
   /* Function for child row details*/
   function getChildRow(data) {
     // `data` is the data object for the row
-    var child_table = '<table cellpadding="5" cellspacing="0" style="padding-left:50px;">'
-      '<thead><tr>' +
-        '<td>RA</td>' +
-        '<td>RA Unc</td>' +
-        '<td>Dec</td>' +
-        '<td>Dec Unc</td>' +
-        '<td>Source</td>' +
-      '</tr></thead>';
+    var child_table = '';
     // Loop over each position and add it to the table
     console.log("positions: ")
     console.log(data.positions)
-    for (var i = 0; i < data.positions.length; i++){
+    for (var i = 1; i < data.positions.length; i++){
       console.log("pos: ")
       console.log(data.positions[i])
       child_table +=
       '<tr>' +
+        '<td></td>' +
+        '<td></td>' +
+        '<td></td>' +
         '<td>' + data.positions[i].ra_hms + '</td>' +
         '<td>' + data.positions[i].ra_pos_error + '</td>' +
         '<td>' + data.positions[i].dec_dms + '</td>' +
         '<td>' + data.positions[i].dec_pos_error + '</td>' +
         '<td>' + data.positions[i].source + '</td>' +
+        '<td>' + data.positions[i].datetime + '</td>' +
       '</tr>';
     }
-    return child_table + '</table>';
+    return $(child_table).toArray();
   }
   $(document).ready(function () {
     console.log('{{ frb_json | safe }}')
@@ -75,7 +76,14 @@
         },
         { data: 'id' },
         { data: 'tns_name' },
+        { data: 'ra_hms' },
+        { data: 'ra_pos_error' },
+        { data: 'dec_dms' },
+        { data: 'dec_pos_error' },
+        { data: 'source' },
+        { data: 'datetime' },
         { data: 'dm' },
+        { data: 'sn' },
         { data: 'width' },
       ],
       order: [[1, 'asc']],

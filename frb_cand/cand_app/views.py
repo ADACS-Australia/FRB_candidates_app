@@ -68,8 +68,19 @@ def FRBEvent_table(request):
 
     # Annotate the pointings for each event
     for frb in frb_dict:
-        positions = models.Position.objects.filter(frb__id=frb["id"])
+        positions = models.Position.objects.filter(frb__id=frb["id"]).order_by('-datetime')
         frb["positions"] = list(positions.values())
+        # Also add the most recent one to the main dict
+        most_recent = list(positions.values())[0]
+        frb["ra"] = most_recent["ra"]
+        frb["dec"] = most_recent["dec"]
+        frb["ra_hms"] = most_recent["ra_hms"]
+        frb["dec_dms"] = most_recent["dec_dms"]
+        frb["ra_pos_error"] = most_recent["ra_pos_error"]
+        frb["dec_pos_error"] = most_recent["dec_pos_error"]
+        frb["source"] = most_recent["source"]
+        frb["datetime"] = most_recent["datetime"]
+
 
     # Convert to json
     frb_json = json.dumps(frb_dict, cls=DjangoJSONEncoder)

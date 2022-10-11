@@ -18,3 +18,11 @@ h3{
 h4{
     font-size: 10px;
 }
+
+td.dt-control {
+    background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.dt-control {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}

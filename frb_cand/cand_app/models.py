@@ -38,3 +38,4 @@ class Position(models.Model):
     ra_pos_error  = models.FloatField()
     dec_pos_error = models.FloatField()
     source = models.CharField(max_length=3, choices=POS_SOURCE_CHOICES, verbose_name="The source that was used to calculate the candidate position.")
+    datetime = models.DateTimeField(auto_now_add=True, blank=True)
