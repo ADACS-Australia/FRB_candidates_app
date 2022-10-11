@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 
 import os
-import glob
 import argparse
-import urllib.request
 import requests
 import json
 import yaml
 
-from astropy.coordinates import Angle
+from astropy.coordinates import SkyCoord
 import astropy.units as u
-from astropy.io import fits
 
 import logging
 logger = logging.getLogger(__name__)
@@ -32,14 +29,13 @@ class TokenAuth(requests.auth.AuthBase):
         return r
 
 
-
 def frbevent_upload(yaml_path):
-    """ Upload an MWA observation to the database.
+    """Upload an FRB event to the database.
 
     Parameters
     ----------
-    obsid : `int`
-        MWA observation ID.
+    yaml_path : `str`
+        The full path of the yaml file containing FRB data.
     """
 
     # Upload
@@ -68,7 +64,49 @@ def frbevent_upload(yaml_path):
                 "histogram_open":histogram,
             }
         )
-    print(r)
+    # Return the event id that was just created
+    return json.loads(r.text)["id"]
+
+
+def position_upload(id, yaml_path, source="MB"):
+    """Upload an position for a FRB event to the database.
+
+    Parameters
+    ----------
+    id : `int`
+        The ID of the FRB event to link this position to.
+    yaml_path : `str`
+        The full path of the yaml file containing FRB data.
+    """
+    # Set up connection
+    session = requests.session()
+    session.auth = session.auth = (os.environ['FRB_USER'], os.environ['FRB_PASS'])
+    url = f'{BASE_URL}/position_create/'
+
+    # Load yaml file
+    with open(yaml_path, 'r') as file:
+        frb_dict = yaml.safe_load(file)
+
+    # convert coord to degrees
+    coord = SkyCoord(frb_dict["ra_hms"], frb_dict["dec_hms"], unit=(u.hour, u.deg))
+
+    data = {
+        "frb": id,
+        "ra": coord.ra.deg,
+        "dec": coord.dec.deg,
+        "ra_hms":  frb_dict["ra_hms"],
+        "dec_dms": frb_dict["dec_hms"],
+        "ra_pos_error":  frb_dict["ra_unc"],
+        "dec_pos_error": frb_dict["dec_unc"],
+        "source": source,
+    }
+    r = session.post(
+        url,
+        data=data,
+    )
+    # Return the event id that was just created
+    print(r.status)
+    return r
 
 
 if __name__ == '__main__':
@@ -91,4 +129,5 @@ if __name__ == '__main__':
     logger.addHandler(ch)
     logger.propagate = False
 
-    frbevent_upload(args.yaml)
+    frb_event_id =  frbevent_upload(args.yaml)
+    position_upload(frb_event_id, args.yaml, source="MB")

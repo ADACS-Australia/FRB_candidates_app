@@ -21,4 +21,5 @@ from cand_app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('frbevent_create/', views.frbevent_create),
+    path('position_create/', views.position_create),
 ]
