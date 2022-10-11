@@ -11,6 +11,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def home_page(request):
+    return render(request, 'cand_app/home_page.html')
+
+
 @api_view(['POST'])
 def frbevent_create(request):
     # Create frb event
