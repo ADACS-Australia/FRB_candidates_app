@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 from cand_app import views
 
@@ -23,6 +25,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('frbevent_create/', views.frbevent_create),
+    path('frbevent_table/',  views.frbevent_table),
+    path('frbevent_details/<int:id>/', views.frbevent_details),
     path('position_create/', views.position_create),
-    path('frbevent_table/', views.FRBEvent_table),
 ]
+
+# allow media files to be linked and viewed directly
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -49,6 +49,16 @@ def frbevent_create(request):
     return Response(frb_cand.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+def frbevent_details(request, id):
+    frb_event = models.FRBEvent.objects.get(id=id)
+    first_position = models.Position.objects.filter(frb=frb_event).order_by("-datetime").first()
+    content = {
+        "frb_event": frb_event,
+        "first_position": first_position,
+    }
+    return render(request, 'cand_app/frbevent_details.html', content)
+
+
 @api_view(['POST'])
 def position_create(request):
     # Create frb event
@@ -61,7 +71,7 @@ def position_create(request):
     return Response(position.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def FRBEvent_table(request):
+def frbevent_table(request):
     # Grab events
     frb_events = models.FRBEvent.objects.all()
     frb_dict = list(frb_events.values())

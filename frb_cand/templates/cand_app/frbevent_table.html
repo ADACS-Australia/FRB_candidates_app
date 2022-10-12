@@ -74,7 +74,11 @@
           data: null,
           defaultContent: '',
         },
-        { data: 'id' },
+        {
+          data: 'id',
+          "render": function ( data, type, row, meta ) {
+            return '<a href="/frbevent_details/'+data+'/">'+data+'</a>';
+          }},
         { data: 'tns_name' },
         { data: 'ra_hms' },
         { data: 'ra_pos_error' },

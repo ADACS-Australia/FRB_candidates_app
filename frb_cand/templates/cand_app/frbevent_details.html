@@ -1,0 +1,62 @@
+{% extends 'cand_app/navbar.html' %}
+
+{% block content %}
+
+<title>FRB Event ID:{{ frb_event.id }} </title>
+<h2>FRB Event ID:{{ frb_event.id }}</h2>
+{% if frb_event %}
+<div class="row">
+
+  <div class="column">
+    <center>
+    {% if frb_event.search_path %}
+        <img src="{{frb_event.search_path.url}}"
+            alt="Diagnostic Plot for {{frb_event.id}}"
+            onClick="window.open(this.src)">
+    {% endif %}
+    </center>
+  </div>
+  <div class="column">
+    <center>
+    {% if frb_event.image_path %}
+      <img src="{{frb_event.image_path.url}}"
+          alt="Diagnostic GIF for {{frb_event.id}}"
+          onClick="window.open(this.src)">
+    {% endif %}
+    {% if frb_event.histogram_path %}
+      <img src="{{frb_event.histogram_path.url}}"
+          alt="Diagnostic GIF for {{frb_event.id}}"
+          onClick="window.open(this.src)">
+    {% endif %}
+    </center>
+  </div>
+
+  <div class="column">
+      <div class="card-content">
+        <h3>Detection Parameters:</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Parameter</th>
+              <th scope="col">Value</th>
+            </tr>
+          </thead>
+          <tr><td>TNS Name</td> <td>{{ frb_event.tns_name }}</td></tr>
+          <tr><td>RA</td> <td>{{ first_position.ra_hms }}</td></tr>
+          <tr><td>RA Unc</td> <td>{{ first_position.ra_pos_error }}</td></tr>
+          <tr><td>Dec</td> <td>{{ first_position.dec_dms }}</td></tr>
+          <tr><td>Dec Unc</td> <td>{{ first_position.dec_pos_error }}</td></tr>
+          <tr><td>Source</td> <td>{{ first_position.source }}</td></tr>
+          <tr><td>Datetime</td> <td>{{ first_position.datetime }}</td></tr>
+          <tr><td>DM</td> <td>{{ frb_event.dm }}</td></tr>
+          <tr><td>SN</td> <td>{{ frb_event.sn }}</td></tr>
+          <tr><td>Width</td> <td>{{ frb_event.width }}</td></tr>
+        </table>
+    </div>
+  </div>
+
+</div>
+{% else %}
+<p>frb_event not Found!</p>
+{% endif %}
+{% endblock %}
