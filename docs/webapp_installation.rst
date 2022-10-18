@@ -27,40 +27,50 @@ First try and get it to work with the nimbus IP as the URL. From directory conta
 
 .. code-block::
 
-   uwsgi --socket webapp_tracet.sock --module webapp_tracet.wsgi --chmod-socket=666
+   uwsgi --socket frb-classifier.sock --module frb_cand.wsgi --chmod-socket=666
 
 and nginx should look like this
 
 .. code-block::
 
    upstream django {
-      server unix:///home/ubuntu/tracet/webapp_tracet/webapp_tracet.sock;
+      server unix:///home/ubuntu/FRB_candidates_app/frb_cand/frb-classifier.sock;
    }
 
    server {
-      listen      80;
-      server_name 146.118.70.58;
+      listen 80;
+      server_name <IP>;
       charset     utf-8;
 
+      # max upload size
       client_max_body_size 75M;
 
       location /static {
-         alias /home/ubuntu/tracet/webapp_tracet/static;
+         alias /home/ubuntu/FRB_candidates_app/frb_cand/static_host;
       }
 
+      # Finally, send all non-media requests to the Django server.
       location / {
          uwsgi_pass  django;
-         include     /home/ubuntu/tracet/webapp_tracet/uwsgi_params;
+         include     /home/ubuntu/FRB_candidates_app/frb_cand/uwsgi_params;
       }
+
    }
 
 and make sure the IP is in allowed hosts in settings.py:
 
 .. code-block::
 
-   ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '146.118.70.58']
+   ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '<IP>']
 
 Check if the works by using the IP as a URL in your browser.
+
+Perimission errors
+------------------
+If you get a `(13: Permission denied)` error in the nginx logs here is a helpful fix
+
+https://stackoverflow.com/questions/25774999/nginx-stat-failed-13-permission-denied
+
 
 Static files errors
 -------------------
@@ -86,7 +96,7 @@ and update the nginx to
 .. code-block::
 
    location /static {
-      alias /home/ubuntu/tracet/webapp_tracet/static_host;
+      alias /home/ubuntu/FRB_candidates_app/frb_cand/static_host;
    }
 
 Try a simple domain

@@ -24,29 +24,9 @@ Start the uwsgi server with
 
 .. code-block::
 
-   uwsgi --ini webapp_tracet_uwsgi.ini
+   uwsgi --ini frb_cand_uwsgi.ini
 
 This will run in the background and the following sections describe how to restarting and stopping the server.
-
-You also need to run the a twistd wrapper to listen for VOEvents. This can be run in tmux session using the command:
-
-.. code-block::
-
-   tmux new -s twistd_comet_wrapper
-
-This will land you in the tmux session where you can run the wrapper command:
-
-.. code-block::
-
-   python twistd_comet_wrapper.py
-
-This will start listening to VOEvents and you should see that "VOEvent Receiving Status" on the homepage changes from stopped to running.
-
-You can detatch from the session with command `CTRL+B, D` and reattach with
-
-.. code-block::
-
-   tmux attach -t twistd_comet_wrapper
 
 
 Restarting the server
@@ -92,4 +72,4 @@ Larger updates may need a combination of the following commands
    python manage.py makemigrations
    python manage.py migrate
    # Start server
-   uwsgi --ini gleam_webapp_uwsgi.ini
+   uwsgi --ini frb_cand_uwsgi.ini

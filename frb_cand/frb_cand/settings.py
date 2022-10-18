@@ -23,8 +23,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'frb_cand_db',
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -32,7 +32,7 @@ DATABASES = {
 
 # Based on the SYSTEM_ENV decide if DEBUG should be on or off
 # and override secret key and databases for github actions testing
-SYSTEM_ENV = os.environ.get('SYSTEM_ENV', None)
+SYSTEM_ENV = config('SYSTEM_ENV')
 if SYSTEM_ENV == 'PRODUCTION' or SYSTEM_ENV == 'STAGING':
     DEBUG = False
     CSRF_COOKIE_SECURE = True
