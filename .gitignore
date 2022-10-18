@@ -1,3 +1,4 @@
 *.pyc
 *.sqlite3
 frb_cand/media/
+frb_cand/settings.ini

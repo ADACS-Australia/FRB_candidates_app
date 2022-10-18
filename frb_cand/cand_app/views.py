@@ -10,9 +10,13 @@ from rest_framework.response import Response
 from . import models, serializers
 
 import json
+import requests
+from decouple import config
+
 import logging
 logger = logging.getLogger(__name__)
 
+SLACK_WEBHOOK=config("SLACK_WEBHOOK")
 
 def home_page(request):
     return render(request, 'cand_app/home_page.html')
@@ -99,3 +103,53 @@ def frbevent_table(request):
         "frb_json": frb_json,
     }
     return render(request, 'cand_app/frbevent_table.html', content)
+
+
+def slack_event_post(id):
+    frb_event = models.FRBEvent.objects.get(id=id)
+    slack_json = {
+        "blocks": [
+            {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": f"New FRB Event (ID:{frb_event.id})",
+                }
+            },
+            {
+                "type": "image",
+                "title": {
+                    "type": "plain_text",
+                    "text": "FRB waterfall",
+                },
+                "image_url": "https://assets3.thrillist.com/v1/image/1682388/size/tl-horizontal_main.jpg",
+                "alt_text": "marg"
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Confirm",
+                        },
+                        "style": "primary",
+                        "action_id": "action_confirm"
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Reject",
+                        },
+                        "style": "danger",
+                        "action_id": "action_reject"
+                    }
+                ]
+            }
+        ]
+    }
+    headers = {'content-type': 'application/json'}
+    r=requests.post(SLACK_WEBHOOK, data=json.dumps(slack_json), headers=headers)
+    print(r.text)
