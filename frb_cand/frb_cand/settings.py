@@ -17,17 +17,43 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# Secret key and database defaults
 SECRET_KEY = config("SECRET_KEY")
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'frb_cand_db',
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Based on the SYSTEM_ENV decide if DEBUG should be on or off
+# and override secret key and databases for github actions testing
+SYSTEM_ENV = os.environ.get('SYSTEM_ENV', None)
+if SYSTEM_ENV == 'PRODUCTION' or SYSTEM_ENV == 'STAGING':
+    DEBUG = False
+    CSRF_COOKIE_SECURE = True
+    STATIC_ROOT = os.path.join(BASE_DIR, "static_host/")
+elif SYSTEM_ENV == 'GITHUB_WORKFLOW':
+    DEBUG = True
+    SECRET_KEY = 'TESTING_KEY'
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'github_actions',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }
+elif SYSTEM_ENV == 'DEVELOPMENT':
+    DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'www.frb-classifier.duckdns.org', 'frb-classifier.duckdns.org']
 
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
@@ -43,7 +69,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cand_app',
-    'django_slack',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +93,6 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                #'django.template.loaders.app_directories.Loader',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -77,17 +101,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'frb_cand.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation

@@ -64,6 +64,7 @@ def frbevent_upload(yaml_path):
                 "histogram_open":histogram,
             }
         )
+    print(r)
     # Return the event id that was just created
     return json.loads(r.text)["id"]
 
