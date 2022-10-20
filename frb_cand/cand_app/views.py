@@ -157,7 +157,8 @@ def slack_event_post(id):
                             "text": "Confirm",
                         },
                         "style": "primary",
-                        "action_id": "action_confirm"
+                        "action_id": "action_confirm",
+                        "value" : f"{frb_event.id}",
                     },
                     {
                         "type": "button",
@@ -166,7 +167,8 @@ def slack_event_post(id):
                             "text": "Reject",
                         },
                         "style": "danger",
-                        "action_id": "action_reject"
+                        "action_id": "action_reject",
+                        "value" : f"{frb_event.id}",
                     }
                 ]
             }
@@ -184,10 +186,35 @@ def slack_get_rating(request):
     logger.debug(json.dumps(data, indent=4))
 
     action = data["actions"][0]["action_id"]
+    frb_id = data["actions"][0]["value"]
     logger.debug(f'action: {action}')
+    logger.debug(f'frb_id: {frb_id}')
+    frb_event = models.FRBEvent.objects.get(id=frb_id)
 
+    slack_id = data["user"]["id"]
     slack_username = data["user"]["username"]
+    logger.debug(f'id: {slack_id}')
     logger.debug(f'user: {slack_username}')
+
+    # Get or create slack user
+    slack_user = models.SlackUser.objects.get_or_create(
+        id=slack_id,
+        defaults={
+            "name": slack_username,
+        },
+    )[0]
+
+    # Record their rating
+    event_rating = models.EventRating.objects.get_or_create(
+        frb=frb_event,
+        user=slack_user,
+    )[0]
+    if action == 'action_confirm':
+        event_rating.rating = True
+    else:
+        event_rating.rating = False
+    event_rating.save()
+
 
     # Record response in thread
     headers = {'content-type': 'application/json'}

@@ -39,3 +39,28 @@ class Position(models.Model):
     dec_pos_error = models.FloatField()
     source = models.CharField(max_length=3, choices=POS_SOURCE_CHOICES, verbose_name="The source that was used to calculate the candidate position.")
     datetime = models.DateTimeField(auto_now_add=True, blank=True)
+
+
+class SlackUser(models.Model):
+    id = models.CharField(primary_key=True, max_length=24, verbose_name="Slack account ID")
+    name = models.CharField(max_length=24, verbose_name="Slack account name")
+
+
+class EventRating(models.Model):
+    id = models.AutoField(primary_key=True)
+    frb = models.ForeignKey(
+        FRBEvent,
+        to_field="id",
+        verbose_name="FRB Event",
+        help_text="FRB event this rating describes.",
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        SlackUser,
+        to_field="id",
+        verbose_name="Slack user",
+        help_text="Slack user that made this rating",
+        on_delete=models.CASCADE,
+    )
+    datetime = models.DateTimeField(auto_now_add=True, blank=True)
+    rating = models.BooleanField(default=False)
