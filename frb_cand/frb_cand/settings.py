@@ -53,7 +53,8 @@ elif SYSTEM_ENV == 'GITHUB_WORKFLOW':
 elif SYSTEM_ENV == 'DEVELOPMENT':
     DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'www.frb-classifier.duckdns.org', 'frb-classifier.duckdns.org']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '146.118.64.106', 'www.frb-classifier.duckdns.org', 'frb-classifier.duckdns.org']
+PRODUCTION_URL = 'https://frb-classifier.duckdns.org/'
 
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator, InvalidPage
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -109,6 +110,7 @@ def slack_event_post(id):
     frb_event = models.FRBEvent.objects.get(id=id)
     slack_json = {
         "blocks": [
+            # Title
             {
                 "type": "header",
                 "text": {
@@ -116,15 +118,35 @@ def slack_event_post(id):
                     "text": f"New FRB Event (ID:{frb_event.id})",
                 }
             },
+            # The detection images
             {
                 "type": "image",
                 "title": {
                     "type": "plain_text",
-                    "text": "FRB waterfall",
+                    "text": "FRB search",
                 },
-                "image_url": "https://assets3.thrillist.com/v1/image/1682388/size/tl-horizontal_main.jpg",
-                "alt_text": "marg"
+                "image_url": f"{settings.PRODUCTION_URL}{frb_event.search_path.url}",
+                "alt_text": "search"
             },
+            {
+                "type": "image",
+                "title": {
+                    "type": "plain_text",
+                    "text": "FRB radio image",
+                },
+                "image_url": f"{settings.PRODUCTION_URL}{frb_event.image_path.url}",
+                "alt_text": "image"
+            },
+            {
+                "type": "image",
+                "title": {
+                    "type": "plain_text",
+                    "text": "FRB histogram",
+                },
+                "image_url": f"{settings.PRODUCTION_URL}{frb_event.histogram_path.url}",
+                "alt_text": "histogram"
+            },
+            # Response buttons
             {
                 "type": "actions",
                 "elements": [
