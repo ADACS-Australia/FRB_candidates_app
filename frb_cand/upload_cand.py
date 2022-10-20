@@ -12,12 +12,11 @@ import astropy.units as u
 import logging
 logger = logging.getLogger(__name__)
 
-# SYSTEM_ENV = os.environ.get('SYSTEM_ENV', None)
-# if SYSTEM_ENV == 'DEVELOPMENT':
-#     BASE_URL = 'http://127.0.0.1:8000'
-# else:
-#     BASE_URL = 'https://mwa-image-plane.duckdns.org'
-BASE_URL = 'http://127.0.0.1:8000'
+SYSTEM_ENV = os.environ.get('SYSTEM_ENV', None)
+if SYSTEM_ENV == 'DEVELOPMENT':
+    BASE_URL = 'http://127.0.0.1:8000'
+else:
+    BASE_URL = 'https://frb-classifier.duckdns.org'
 
 
 class TokenAuth(requests.auth.AuthBase):
@@ -50,9 +49,6 @@ def frbevent_upload(yaml_path):
         "dm": frb_dict["dm"],
         "sn": frb_dict["sn"],
         "width": frb_dict["width"],
-        # "search_path": frb_dict["search_path"],
-        # "image_path" : frb_dict["image_path"],
-        # "histogram_path": frb_dict["histogram_path"],
     }
     with open(frb_dict["search_path"], 'rb') as search, open(frb_dict["image_path"], 'rb') as image, open(frb_dict["histogram_path"], 'rb') as histogram:
         r = session.post(

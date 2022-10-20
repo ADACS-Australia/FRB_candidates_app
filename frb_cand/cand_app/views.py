@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator, InvalidPage
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -153,3 +153,31 @@ def slack_event_post(id):
     headers = {'content-type': 'application/json'}
     r=requests.post(SLACK_WEBHOOK, data=json.dumps(slack_json), headers=headers)
     print(r.text)
+
+
+@api_view(['POST'])
+def slack_get_rating(request):
+    # Load slack payload
+    data = json.loads(request.data.dict()["payload"])
+    logger.debug(json.dumps(data, indent=4))
+
+    action = data["actions"][0]["action_id"]
+    logger.debug(f'action: {action}')
+
+    slack_username = data["user"]["username"]
+    logger.debug(f'user: {slack_username}')
+
+    # Record response in thread
+    headers = {'content-type': 'application/json'}
+    response_json = json.dumps(
+        {
+            "thread_ts": data["container"]["message_ts"],
+            "channel": data["container"]["channel_id"],
+            "text": f"{slack_username}'s {action.split('_')[1]} classification has been recorded.",
+        }
+    )
+    r = requests.post(SLACK_WEBHOOK, data=response_json, headers=headers)
+    logger.debug(r)
+
+    # Acknowldege repsonse
+    return HttpResponse(headers=headers)

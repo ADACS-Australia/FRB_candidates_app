@@ -28,6 +28,7 @@ urlpatterns = [
     path('frbevent_table/',  views.frbevent_table),
     path('frbevent_details/<int:id>/', views.frbevent_details),
     path('position_create/', views.position_create),
+    path('slack_get_rating/', views.slack_get_rating),
 ]
 
 # allow media files to be linked and viewed directly
