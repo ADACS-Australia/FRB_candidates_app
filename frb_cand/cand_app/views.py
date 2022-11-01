@@ -13,6 +13,7 @@ from . import models, serializers
 import json
 import requests
 from decouple import config
+import time
 
 import logging
 logger = logging.getLogger(__name__)
@@ -85,16 +86,17 @@ def frbevent_table(request):
     for frb in frb_dict:
         positions = models.Position.objects.filter(frb__id=frb["id"]).order_by('-datetime')
         frb["positions"] = list(positions.values())
-        # Also add the most recent one to the main dict
-        most_recent = list(positions.values())[0]
-        frb["ra"] = most_recent["ra"]
-        frb["dec"] = most_recent["dec"]
-        frb["ra_hms"] = most_recent["ra_hms"]
-        frb["dec_dms"] = most_recent["dec_dms"]
-        frb["ra_pos_error"] = most_recent["ra_pos_error"]
-        frb["dec_pos_error"] = most_recent["dec_pos_error"]
-        frb["source"] = most_recent["source"]
-        frb["datetime"] = most_recent["datetime"]
+        if len(list(positions.values())) > 0:
+            # Also add the most recent one to the main dict
+            most_recent = list(positions.values())[0]
+            frb["ra"] = most_recent["ra"]
+            frb["dec"] = most_recent["dec"]
+            frb["ra_hms"] = most_recent["ra_hms"]
+            frb["dec_dms"] = most_recent["dec_dms"]
+            frb["ra_pos_error"] = most_recent["ra_pos_error"]
+            frb["dec_pos_error"] = most_recent["dec_pos_error"]
+            frb["source"] = most_recent["source"]
+            frb["datetime"] = most_recent["datetime"]
 
 
     # Convert to json
@@ -230,3 +232,108 @@ def slack_get_rating(request):
 
     # Acknowldege repsonse
     return HttpResponse(headers=headers)
+
+
+def ask_for_tns_reply(id_report):
+    reply_url = settings.TNS_URL + "/bulk-report-reply"
+    headers = {'User-Agent': f'tns_marker{{"tns_id": "{settings.TNS_BOT_ID}", "type": "bot", "name": "{settings.TNS_BOT_NAME}"}}'}
+    reply_data = {'api_key': settings.TNS_API_KEY, 'report_id': id_report}
+    response = requests.post(reply_url, headers=headers, data=reply_data)
+    return response
+
+
+def submit_frb_to_tns(id):
+    # Grab frb and position
+    frb_event = models.FRBEvent.objects.get(id=id)
+    position = models.Position.objects.filter(frb__id=id).first()
+
+    # Prepare data to upload to TNS
+    print(f"Sending FRB {id} to the TNS...\n")
+    json_url = settings.TNS_URL + "/bulk-report"
+    headers = {'User-Agent': f'tns_marker{{"tns_id": "{settings.TNS_BOT_ID}", "type": "bot", "name": "{settings.TNS_BOT_NAME}"}}'}
+    frb_dict = {
+        "frb_report": {
+            "0": {
+                "ra": {
+                    "value": position.ra,
+                    "error": position.ra_pos_error,
+                    "units": "deg"
+                },
+                "dec": {
+                    "value": position.dec,
+                    "error": position.dec_pos_error,
+                    "units": "deg"
+                },
+                "discovery_datetime": position.datetime.replace(tzinfo=None).isoformat(' '),
+                "internal_name": "CRAFT",
+                "dm": frb_event.dm,
+                "dm_err": frb_event.dm * 0.1, #TODO Use actual values
+                "reporting_group_id": 58, #CRAFT
+                "discovery_data_source_id": 58, #CRAFT
+                "photometry": {
+                    "photometry_group": {
+                        "0": {
+                            "obsdate": position.datetime.replace(tzinfo=None).isoformat(' '),
+                            #TODO need real values for these too
+                            "flux": "20",
+                            "flux_error": "2",
+                            "flux_units": 8,
+                            "filter_value": 1,
+                            "instrument_value": 1,
+                            "snr": frb_event.sn,
+                            "ref_freq": 1271.5,
+                            "inst_bandwidth": 336,
+                            "channels_no": 336,
+                            "sampling_time": 1.182,
+                        }
+                    }
+                }
+                # "related_files": {
+                #     "0": {
+                #     "related_file_name": "rel_file_1.png",
+                #     "related_file_comments": ""
+                #     },
+                #     "1": {
+                #     "related_file_name": "rel_file_2.jpg",
+                #     "related_file_comments": ""
+                #     }
+                # }
+            }
+        }
+    }
+    json_read = json.dumps(frb_dict, indent = 4)
+    logger.debug(f"json_read:{json_read}")
+    json_data = {'api_key': settings.TNS_API_KEY, 'data': json_read}
+    response = requests.post(json_url, headers=headers, data=json_data)
+    if response.status_code == 200:
+        print("The report was sent to the TNS.\n")
+        json_data = response.json()
+        id_report = json_data['data']['report_id']
+        print(f"Report ID = {id_report}\n")
+    else:
+        print(f"{response.status_code}: The report was not sent to the TNS.\n")
+        print(response.reason)
+        return None
+
+    # Get reply from the TNS about the objname given
+    sleep_sec = 2
+    timeout = 30
+    print(f"Sending reply for the report id {id_report} ...\n")
+    time.sleep(sleep_sec)
+    response = ask_for_tns_reply(id_report)
+    counter = sleep_sec
+    while True:
+        if (response.status_code == 404) and (counter <= timeout):
+            time.sleep(sleep_sec)
+            response = ask_for_tns_reply(id_report)
+            counter = counter + sleep_sec
+        else:
+            break
+    try:
+        objname = response.json()['data']['feedback']["frb_report"][0]["100"]["objname"]
+    except Exception as e:
+        print(e)
+        print(f"response json:\n{json.dumps(response.json(), indent = 4)}\n")
+        return None
+    else:
+        return objname

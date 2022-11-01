@@ -30,11 +30,16 @@ DATABASES = {
     }
 }
 
+TNS_URL = "https://sandbox.wis-tns.org/api" #TODO use real url in production
+TNS_BOT_ID = config('TNS_BOT_ID')
+TNS_BOT_NAME = config('TNS_BOT_NAME')
+TNS_API_KEY = config('TNS_API_KEY')
+
 # Based on the SYSTEM_ENV decide if DEBUG should be on or off
 # and override secret key and databases for github actions testing
 SYSTEM_ENV = config('SYSTEM_ENV')
 if SYSTEM_ENV == 'PRODUCTION' or SYSTEM_ENV == 'STAGING':
-    DEBUG = False
+    DEBUG = True
     CSRF_COOKIE_SECURE = True
     STATIC_ROOT = os.path.join(BASE_DIR, "static_host/")
 elif SYSTEM_ENV == 'GITHUB_WORKFLOW':
@@ -139,7 +144,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static/"),
 )
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
 # Default primary key field type
