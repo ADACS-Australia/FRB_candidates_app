@@ -86,6 +86,10 @@ def frbevent_table(request):
     for frb in frb_dict:
         positions = models.Position.objects.filter(frb__id=frb["id"]).order_by('-datetime')
         frb["positions"] = list(positions.values())
+        # Count ratings
+        ratings = models.EventRating.objects.filter(frb__id=frb["id"])
+        frb["pos_rates"] = len(ratings.filter(rating=True))
+        frb["neg_rates"] = len(ratings.filter(rating=False))
         if len(list(positions.values())) > 0:
             # Also add the most recent one to the main dict
             most_recent = list(positions.values())[0]

@@ -11,6 +11,8 @@
         <th></th>
         <th>ID</th>
         <th>TNS name</th>
+        <th># Confirm</th>
+        <th># Reject</th>
         <th>RA</th>
         <th>RA Unc</th>
         <th>Dec</th>
@@ -51,6 +53,8 @@
         '<td></td>' +
         '<td></td>' +
         '<td></td>' +
+        '<td></td>' +
+        '<td></td>' +
         '<td>' + data.positions[i].ra_hms + '</td>' +
         '<td>' + data.positions[i].ra_pos_error + '</td>' +
         '<td>' + data.positions[i].dec_dms + '</td>' +
@@ -80,6 +84,8 @@
             return '<a href="/frbevent_details/'+data+'/">'+data+'</a>';
           }},
         { data: 'tns_name' },
+        { data: 'pos_rates' },
+        { data: 'neg_rates' },
         { data: 'ra_hms' },
         { data: 'ra_pos_error' },
         { data: 'dec_dms' },
