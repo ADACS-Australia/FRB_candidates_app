@@ -4,3 +4,4 @@ frb_cand/media/
 frb_cand/settings.ini
 frb_cand/uwsgi-emperor.log
 frb_cand/static_host/
+html/

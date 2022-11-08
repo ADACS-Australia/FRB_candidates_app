@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver, Signal
 
-from .models import FRBEvent, Position
+from .models import FRBEvent, RadioMeasurement
 from .views import slack_event_post, submit_frb_to_tns
 
 import logging
@@ -14,13 +14,13 @@ def slack_trigger(sender, instance, **kwargs):
     print(f"posting {instance.id}")
     slack_event_post(instance.id)
 
-@receiver(post_save, sender=Position)
+@receiver(post_save, sender=RadioMeasurement)
 def tns_trigger(sender, instance, **kwargs):
     """Each time the first position is uploaded, send it to the Tranisent Name Server.
     """
     logger.debug(f"Checking {instance.frb}")
-    frb_pos = Position.objects.filter(frb=instance.frb)
-    if len(frb_pos) == 1:
+    frb_mes = RadioMeasurement.objects.filter(frb=instance.frb)
+    if len(frb_mes) == 1:
         # This is the first postion so upload it
         tns_name = submit_frb_to_tns(instance.frb.id)
         print(f"tns_name: {tns_name}")

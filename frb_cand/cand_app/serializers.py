@@ -8,7 +8,7 @@ class FRBEventSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PositonSerializer(serializers.ModelSerializer):
+class RadioMeasurementSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Position
+        model = models.RadioMeasurement
         fields = '__all__'

@@ -57,7 +57,7 @@ def frbevent_create(request):
 
 def frbevent_details(request, id):
     frb_event = models.FRBEvent.objects.get(id=id)
-    first_position = models.Position.objects.filter(frb=frb_event).order_by("-datetime").first()
+    first_position = models.RadioMeasurement.objects.filter(frb=frb_event).order_by("-datetime").first()
     content = {
         "frb_event": frb_event,
         "first_position": first_position,
@@ -84,7 +84,7 @@ def frbevent_table(request):
 
     # Annotate the pointings for each event
     for frb in frb_dict:
-        positions = models.Position.objects.filter(frb__id=frb["id"]).order_by('-datetime')
+        positions = models.RadioMeasurement.objects.filter(frb__id=frb["id"]).order_by('-datetime')
         frb["positions"] = list(positions.values())
         # Count ratings
         ratings = models.EventRating.objects.filter(frb__id=frb["id"])
@@ -249,7 +249,7 @@ def ask_for_tns_reply(id_report):
 def submit_frb_to_tns(id):
     # Grab frb and position
     frb_event = models.FRBEvent.objects.get(id=id)
-    position = models.Position.objects.filter(frb__id=id).first()
+    position = models.RadioMeasurement.objects.filter(frb__id=id).first()
 
     # Prepare data to upload to TNS
     print(f"Sending FRB {id} to the TNS...\n")
