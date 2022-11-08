@@ -37,30 +37,32 @@ Here is an example of what the YAML can look like
 
     {
         # Only used for first detection/measurement
-        "time_of_arrival": "2017-11-17T12:21:38.87"
+        "time_of_arrival": "2017-11-17T12:21:38.87",
         "repeater": true,
         "search_path": "example_search.png",
         "image_path" : "example_image.png",
         "histogram_path": "example_histogram.png",
 
         # Required
-        "DM": 411.0,
-        "DM_err": 1.0,
+        "dm": 411.0,
+        "dm_err": 1.0,
         "ra": 77.01461542,
         "ra_err": 0.05,
         "dec": 26.06069556,
         "dec_err": 0.05,
         "sn": 50,
         "width": 5,
+        "flux": 35,
+        "flux_err": 3,
         "source": "MB",
         "version": "v1.0",
 
         # Optional
-        "fluence": 45
-        "fluence_err": 5
-        "DMISM": 123.16007817568256,
-        "RM": -613.0,
-        "RM_err": 2.0,
+        "fluence": 45,
+        "fluence_err": 5,
+        "dmism": 123.16007817568256,
+        "rm": -613.0,
+        "rm_err": 2.0,
         "cosmo": "Planck18",
         "eellipse": {
             "a": 0.004,
@@ -91,10 +93,10 @@ Each of the keys:
 "histogram_path": `str`, optional
     The path to the histogram image
 
-"DM" : `float`
+"dm" : `float`
     The dispersion measure of the FRB in pc / cm^3
 
-"DM_err" : `float`
+"dm_err" : `float`
     The error of the dispersion measure of the FRB in pc / cm^3
 
 "ra": `str`
@@ -115,6 +117,12 @@ Each of the keys:
 "width": `float`
     The width of the candidate pulse in ms
 
+"flux": `float`, optional
+    The flux density of the event in Jy
+
+"flux_err": `float`, optional
+    The error of the flux density of the event in Jy
+
 "source": `str`
     The source (telescope pipeline) of the measurements, should be either MB (Multi-Beam) or HT (High-Time resolution)
 
@@ -127,13 +135,13 @@ Each of the keys:
 "fluence_err": `float`, optional
     The error of the fluence of the event in Jy ms
 
-"DMISM" : `float`, optional
+"dmism" : `float`, optional
     The estimated amount of the dispersion measure that is contributed by the interstellar medium in pc / cm^3
 
-"RM": `float`, optional
+"rm": `float`, optional
     The Rotation Measure of the candidate in rad / m^2
 
-"RM_err": `float`, optional
+"rm_err": `float`, optional
     The error of the Rotation Measure of the candidate in rad / m^2
 
 "cosmo": `str`, optional

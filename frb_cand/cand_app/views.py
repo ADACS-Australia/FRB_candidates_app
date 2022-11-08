@@ -57,24 +57,24 @@ def frbevent_create(request):
 
 def frbevent_details(request, id):
     frb_event = models.FRBEvent.objects.get(id=id)
-    first_position = models.RadioMeasurement.objects.filter(frb=frb_event).order_by("-datetime").first()
+    first_radio_measurement = models.RadioMeasurement.objects.filter(frb=frb_event).order_by("-datetime").first()
     content = {
         "frb_event": frb_event,
-        "first_position": first_position,
+        "first_radio_measurement": first_radio_measurement,
     }
     return render(request, 'cand_app/frbevent_details.html', content)
 
 
 @api_view(['POST'])
-def position_create(request):
+def radio_measurement_create(request):
     # Create frb event
-    position = serializers.PositonSerializer(data=request.data)
-    if position.is_valid():
-        position.save()
-        return JsonResponse({"data":position.data}, status=status.HTTP_201_CREATED)
+    radio_measurement = serializers.RadioMeasurementSerializer(data=request.data)
+    if radio_measurement.is_valid():
+        radio_measurement.save()
+        return JsonResponse({"data":radio_measurement.data}, status=status.HTTP_201_CREATED)
     logger.debug(request.data)
-    logger.error(position.errors)
-    return Response(position.errors, status=status.HTTP_400_BAD_REQUEST)
+    logger.error(radio_measurement.errors)
+    return Response(radio_measurement.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def frbevent_table(request):
@@ -84,15 +84,15 @@ def frbevent_table(request):
 
     # Annotate the pointings for each event
     for frb in frb_dict:
-        positions = models.RadioMeasurement.objects.filter(frb__id=frb["id"]).order_by('-datetime')
-        frb["positions"] = list(positions.values())
+        radio_measurements = models.RadioMeasurement.objects.filter(frb__id=frb["id"]).order_by('-datetime')
+        frb["radio_measurements"] = list(radio_measurements.values())
         # Count ratings
         ratings = models.EventRating.objects.filter(frb__id=frb["id"])
         frb["pos_rates"] = len(ratings.filter(rating=True))
         frb["neg_rates"] = len(ratings.filter(rating=False))
-        if len(list(positions.values())) > 0:
+        if len(list(radio_measurements.values())) > 0:
             # Also add the most recent one to the main dict
-            most_recent = list(positions.values())[0]
+            most_recent = list(radio_measurements.values())[0]
             frb["ra"] = most_recent["ra"]
             frb["dec"] = most_recent["dec"]
             frb["ra_hms"] = most_recent["ra_hms"]
@@ -247,9 +247,9 @@ def ask_for_tns_reply(id_report):
 
 
 def submit_frb_to_tns(id):
-    # Grab frb and position
+    # Grab frb and radio_measurement
     frb_event = models.FRBEvent.objects.get(id=id)
-    position = models.RadioMeasurement.objects.filter(frb__id=id).first()
+    radio_measurement = models.RadioMeasurement.objects.filter(frb__id=id).first()
 
     # Prepare data to upload to TNS
     print(f"Sending FRB {id} to the TNS...\n")
@@ -259,32 +259,32 @@ def submit_frb_to_tns(id):
         "frb_report": {
             "0": {
                 "ra": {
-                    "value": position.ra,
-                    "error": position.ra_pos_error,
+                    "value": radio_measurement.ra,
+                    "error": radio_measurement.ra_pos_error,
                     "units": "deg"
                 },
                 "dec": {
-                    "value": position.dec,
-                    "error": position.dec_pos_error,
+                    "value": radio_measurement.dec,
+                    "error": radio_measurement.dec_pos_error,
                     "units": "deg"
                 },
-                "discovery_datetime": position.datetime.replace(tzinfo=None).isoformat(' '),
+                "discovery_datetime": frb_event.time_of_arrival.replace(tzinfo=None).isoformat(' '),
                 "internal_name": "CRAFT",
-                "dm": frb_event.dm,
-                "dm_err": frb_event.dm * 0.1, #TODO Use actual values
+                "dm": radio_measurement.dm,
+                "dm_err": radio_measurement.dm_err,
                 "reporting_group_id": 58, #CRAFT
                 "discovery_data_source_id": 58, #CRAFT
                 "photometry": {
                     "photometry_group": {
                         "0": {
-                            "obsdate": position.datetime.replace(tzinfo=None).isoformat(' '),
+                            "obsdate": frb_event.time_of_arrival.replace(tzinfo=None).isoformat(' '),
                             #TODO need real values for these too
-                            "flux": "20",
-                            "flux_error": "2",
+                            "flux": radio_measurement.flux,
+                            "flux_error": radio_measurement.flux_err,
                             "flux_units": 8,
                             "filter_value": 1,
                             "instrument_value": 1,
-                            "snr": frb_event.sn,
+                            "snr": radio_measurement.sn,
                             "ref_freq": 1271.5,
                             "inst_bandwidth": 336,
                             "channels_no": 336,

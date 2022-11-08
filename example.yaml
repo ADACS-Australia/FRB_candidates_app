@@ -1,13 +1,37 @@
 {
-  "tns_name": "20220725A",
-  "dm": 656,
-  "sn": 50,
-  "width": 5,
-  "search_path": "example_search.png",
-  "image_path" : "example_image.png",
-  "histogram_path": "example_histogram.png",
-  "ra_hms": "1h10m22.10670424s",
-  "ra_unc": 0.32874885005272164,
-  "dec_hms": "-70d48m40.50467718",
-  "dec_unc": 0.409720149,
+    # Only used for first detection/measurement
+    "time_of_arrival": "2017-11-17T12:21:38.87",
+    "repeater": true,
+    "search_path": "example_search.png",
+    "image_path" : "example_image.png",
+    "histogram_path": "example_histogram.png",
+
+    # Required
+    "dm": 411.0,
+    "dm_err": 1.0,
+    "ra": 77.01461542,
+    "ra_err": 0.05,
+    "dec": 26.06069556,
+    "dec_err": 0.05,
+    "sn": 50,
+    "width": 5,
+    "flux": 35,
+    "flux_err": 3,
+    "source": "MB",
+    "version": "v1.0",
+
+    # Optional
+    "fluence": 45,
+    "fluence_err": 5,
+    "dmism": 123.16007817568256,
+    "rm": -613.0,
+    "rm_err": 2.0,
+    "cosmo": "Planck18",
+    "eellipse": {
+        "a": 0.004,
+        "b": 0.004,
+        "cl": 68.0,
+        "theta": 0.0
+    },
+    "z": 0.0982,
 }

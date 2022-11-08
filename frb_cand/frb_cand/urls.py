@@ -27,7 +27,7 @@ urlpatterns = [
     path('frbevent_create/', views.frbevent_create),
     path('frbevent_table/',  views.frbevent_table),
     path('frbevent_details/<int:id>/', views.frbevent_details),
-    path('position_create/', views.position_create),
+    path('radio_measurement_create/', views.radio_measurement_create),
     path('slack_get_rating/', views.slack_get_rating),
 ]
 
