@@ -33,7 +33,7 @@
 
   <div class="column">
       <div class="card-content">
-        <h3>Detection Parameters:</h3>
+        <h3>First Detection Parameters:</h3>
         <table class="table">
           <thead>
             <tr>
@@ -41,20 +41,79 @@
               <th scope="col">Value</th>
             </tr>
           </thead>
-          <tr><td>TNS Name</td> <td>{{ frb_event.tns_name }}</td></tr>
-          <tr><td>RA</td> <td>{{ first_position.ra_hms }}</td></tr>
-          <tr><td>RA Unc</td> <td>{{ first_position.ra_pos_error }}</td></tr>
-          <tr><td>Dec</td> <td>{{ first_position.dec_dms }}</td></tr>
-          <tr><td>Dec Unc</td> <td>{{ first_position.dec_pos_error }}</td></tr>
-          <tr><td>Source</td> <td>{{ first_position.source }}</td></tr>
-          <tr><td>Datetime</td> <td>{{ first_position.datetime }}</td></tr>
-          <tr><td>DM</td> <td>{{ frb_event.dm }}</td></tr>
-          <tr><td>SN</td> <td>{{ frb_event.sn }}</td></tr>
-          <tr><td>Width</td> <td>{{ frb_event.width }}</td></tr>
+          <tr><td>TNS name</td></td> <td>{{ frb_event.tns_name }}</tr>
+          <tr><td># Confirm</td> <td>{{ ratings.pos_rates }}</td></tr>
+          <tr><td># Reject</td>  <td>{{ ratings.neg_rates }}</td></tr>
+          <tr><td>RA</td> <td>{{ first_radio_measurement.ra_hms }}</td></tr>
+          <tr><td>RA Error</td> <td>{{ first_radio_measurement.ra_pos_error }}</td></tr>
+          <tr><td>Dec</td> <td>{{ first_radio_measurement.dec_dms }}</td></tr>
+          <tr><td>Dec Error</td> <td>{{ first_radio_measurement.dec_pos_error }}</td></tr>
+          <tr><td>DM</td> <td>{{ first_radio_measurement.dm }}</td></tr>
+          <tr><td>Time of Arrival</td> <td>{{ frb_event.time_of_arrival }}</td></tr>
+          <tr><td>Source</td> <td>{{ first_radio_measurement.get_source_display }}</td></tr>
+          <tr><td>Version</td> <td>{{ first_radio_measurement.version }}</td></tr>
+          <tr><td>SN</td> <td>{{ first_radio_measurement.sn }}</td></tr>
+          <tr><td>Width</td> <td>{{ first_radio_measurement.width }}</td></tr>
+          <tr><td>Z</td> <td>{{ first_radio_measurement.z }}</td></tr>
+          <tr><td>RM</td> <td>{{ first_radio_measurement.rm }}</td></tr>
+          <tr><td>RM Error</td> <td>{{ first_radio_measurement.rm_err }}</td></tr>
+          <tr><td>Fluence</td> <td>{{ first_radio_measurement.fluence }}</td></tr>
+          <tr><td>Fluence Error</td> <td>{{ first_radio_measurement.fluence_err }}</td></tr>
+          <tr><td>Flux</td> <td>{{ first_radio_measurement.flux }}</td></tr>
+          <tr><td>Flux Error</td> <td>{{ first_radio_measurement.flux_err }}</td></tr>
         </table>
     </div>
   </div>
 
+</div>
+<div>
+  <h3>Radio Measurements</h3>
+  <table class="fl-table">
+    <thead>
+      <tr>
+        <th>RA</th>
+        <th>RA Error</th>
+        <th>Dec</th>
+        <th>Dec Error</th>
+        <th>DM</th>
+        <th>Datetime</th>
+        <th>Source</th>
+        <th>Version</th>
+        <th>SN</th>
+        <th>Width</th>
+        <th>Z</th>
+        <th>RM</th>
+        <th>RM Error</th>
+        <th>Fluence</th>
+        <th>Fluence Error</th>
+        <th>Flux</th>
+        <th>Flux Error</th>
+      </tr>
+    </thead>
+    {% for rm in radio_measurements %}
+      <tr>
+        <td>{{ rm.ra_hms }}</td>
+        <td>{{ rm.ra_pos_error }}</td>
+        <td>{{ rm.dec_dms }}</td>
+        <td>{{ rm.dec_pos_error }}</td>
+        <td>{{ rm.dm }}</td>
+        <td>{{ rm.datetime }}</td>
+        <td>{{ rm.get_source_display }}</td>
+        <td>{{ rm.version }}</td>
+        <td>{{ rm.sn }}</td>
+        <td>{{ rm.width }}</td>
+        <td>{{ rm.z }}</td>
+        <td>{{ rm.rm }}</td>
+        <td>{{ rm.rm_err }}</td>
+        <td>{{ rm.fluence }}</td>
+        <td>{{ rm.fluence_err }}</td>
+        <td>{{ rm.flux }}</td>
+        <td>{{ rm.flux_err }}</td>
+      </tr>
+    {% empty %}
+      <tr><td>No objects yet.</td></tr>
+    {% endfor %}
+  </table>
 </div>
 {% else %}
 <p>frb_event not Found!</p>

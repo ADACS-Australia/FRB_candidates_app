@@ -57,10 +57,17 @@ def frbevent_create(request):
 
 def frbevent_details(request, id):
     frb_event = models.FRBEvent.objects.get(id=id)
-    first_radio_measurement = models.RadioMeasurement.objects.filter(frb=frb_event).order_by("-datetime").first()
+    radio_measurements = models.RadioMeasurement.objects.filter(frb=frb_event).order_by("-datetime")
+    frb_ratings = models.EventRating.objects.filter(frb=frb_event)
+    ratings = {
+        "pos_rates": len(frb_ratings.filter(rating=True)),
+        "neg_rates": len(frb_ratings.filter(rating=False)),
+    }
     content = {
         "frb_event": frb_event,
-        "first_radio_measurement": first_radio_measurement,
+        "first_radio_measurement": radio_measurements.first(),
+        "radio_measurements": radio_measurements,
+        "ratings": ratings,
     }
     return render(request, 'cand_app/frbevent_details.html', content)
 
@@ -94,6 +101,9 @@ def frbevent_table(request):
             # Also add the most recent one to the main dict
             most_recent = list(radio_measurements.values())[0]
             for rmkey in most_recent.keys():
+                if rmkey == "id":
+                    # Skip measurement ID so it doesn't overide frb ID
+                    continue
                 frb[rmkey] = most_recent[rmkey]
             # Grab the display name for source
             frb["source"] = dict(models.POS_SOURCE_CHOICES)[most_recent["source"]]

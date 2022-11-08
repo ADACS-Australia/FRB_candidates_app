@@ -14,9 +14,9 @@
         <th># Confirm</th>
         <th># Reject</th>
         <th>RA</th>
-        <th>RA Unc</th>
+        <th>RA Error</th>
         <th>Dec</th>
-        <th>Dec Unc</th>
+        <th>Dec Error</th>
         <th>DM</th>
         <th>DM Error</th>
         <th>Source</th>
@@ -127,6 +127,7 @@
         { data: 'flux_err' },
       ],
       order: [[1, 'desc']],
+      pageLength: 100
     });
 
     // Add event listener for opening and closing details
