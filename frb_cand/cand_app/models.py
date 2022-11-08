@@ -47,6 +47,8 @@ class RadioMeasurement(models.Model):
     z = models.FloatField(blank=True, null=True, verbose_name="Red Shift")
     rm = models.FloatField(blank=True, null=True, verbose_name="Rotation Measure (rad/m^2)")
     rm_err = models.FloatField(blank=True, null=True, verbose_name="Rotation Measure Error (rad/m^2)")
+    fluence = models.FloatField(blank=True, null=True, verbose_name="Fluence (Jy ms)")
+    fluence_err = models.FloatField(blank=True, null=True, verbose_name="Fluence Error (Jy ms)")
 
 
 class SlackUser(models.Model):
