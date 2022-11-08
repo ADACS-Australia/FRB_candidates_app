@@ -347,3 +347,11 @@ def submit_frb_to_tns(id):
         return None
     else:
         return objname
+
+
+def trigger_pipeline(request, id):
+    #TODO will sent off request here, maybe output where it will output data
+
+    #TODO only admins should be able to click this
+    # Return to confirmation page
+    return render(request, 'cand_app/trigger_pipeline.html')

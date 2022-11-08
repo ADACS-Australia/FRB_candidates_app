@@ -5,6 +5,9 @@
 <title>FRB Event ID:{{ frb_event.id }} </title>
 <h2>FRB Event ID:{{ frb_event.id }}</h2>
 {% if frb_event %}
+<h2>
+  <button type="button" class="btn btn-success btn-lg"   onclick="location.href='/trigger_pipeline/{{ frb_event.id }}/'">Trigger Processing Pipeline</button>
+</h2>
 <div class="row">
 
   <div class="column">

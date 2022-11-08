@@ -29,6 +29,7 @@ urlpatterns = [
     path('frbevent_details/<int:id>/', views.frbevent_details),
     path('radio_measurement_create/', views.radio_measurement_create),
     path('slack_get_rating/', views.slack_get_rating),
+    path('trigger_pipeline/<int:id>/', views.trigger_pipeline),
 ]
 
 # allow media files to be linked and viewed directly
