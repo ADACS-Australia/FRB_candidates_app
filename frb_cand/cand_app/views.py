@@ -93,14 +93,10 @@ def frbevent_table(request):
         if len(list(radio_measurements.values())) > 0:
             # Also add the most recent one to the main dict
             most_recent = list(radio_measurements.values())[0]
-            frb["ra"] = most_recent["ra"]
-            frb["dec"] = most_recent["dec"]
-            frb["ra_hms"] = most_recent["ra_hms"]
-            frb["dec_dms"] = most_recent["dec_dms"]
-            frb["ra_pos_error"] = most_recent["ra_pos_error"]
-            frb["dec_pos_error"] = most_recent["dec_pos_error"]
-            frb["source"] = most_recent["source"]
-            frb["datetime"] = most_recent["datetime"]
+            for rmkey in most_recent.keys():
+                frb[rmkey] = most_recent[rmkey]
+            # Grab the display name for source
+            frb["source"] = dict(models.POS_SOURCE_CHOICES)[most_recent["source"]]
 
 
     # Convert to json

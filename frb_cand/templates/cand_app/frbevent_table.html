@@ -17,11 +17,20 @@
         <th>RA Unc</th>
         <th>Dec</th>
         <th>Dec Unc</th>
-        <th>Source</th>
-        <th>Datetime</th>
         <th>DM</th>
+        <th>DM Error</th>
+        <th>Source</th>
+        <th>Version</th>
+        <th>Datetime</th>
         <th>SN</th>
         <th>Width</th>
+        <th>Z</th>
+        <th>RM</th>
+        <th>RM Error</th>
+        <th>Fluence</th>
+        <th>Fluence Error</th>
+        <th>Flux</th>
+        <th>Flux Error</th>
       </tr>
     </thead>
     <!-- {% for object in frb_events %}
@@ -43,11 +52,11 @@
     // `data` is the data object for the row
     var child_table = '';
     // Loop over each position and add it to the table
-    console.log("positions: ")
-    console.log(data.positions)
-    for (var i = 1; i < data.positions.length; i++){
+    console.log("radio_measurements: ")
+    console.log(data.radio_measurements)
+    for (var i = 1; i < data.radio_measurements.length; i++){
       console.log("pos: ")
-      console.log(data.positions[i])
+      console.log(data.radio_measurements[i])
       child_table +=
       '<tr>' +
         '<td></td>' +
@@ -55,12 +64,24 @@
         '<td></td>' +
         '<td></td>' +
         '<td></td>' +
-        '<td>' + data.positions[i].ra_hms + '</td>' +
-        '<td>' + data.positions[i].ra_pos_error + '</td>' +
-        '<td>' + data.positions[i].dec_dms + '</td>' +
-        '<td>' + data.positions[i].dec_pos_error + '</td>' +
-        '<td>' + data.positions[i].source + '</td>' +
-        '<td>' + data.positions[i].datetime + '</td>' +
+        '<td>' + data.radio_measurements[i].ra_hms + '</td>' +
+        '<td>' + data.radio_measurements[i].ra_pos_error + '</td>' +
+        '<td>' + data.radio_measurements[i].dec_dms + '</td>' +
+        '<td>' + data.radio_measurements[i].dec_pos_error + '</td>' +
+        '<td>' + data.radio_measurements[i].dm + '</td>' +
+        '<td>' + data.radio_measurements[i].dm_err + '</td>' +
+        '<td>' + data.radio_measurements[i].source + '</td>' +
+        '<td>' + data.radio_measurements[i].version + '</td>' +
+        '<td>' + data.radio_measurements[i].datetime + '</td>' +
+        '<td>' + data.radio_measurements[i].sn + '</td>' +
+        '<td>' + data.radio_measurements[i].width + '</td>' +
+        '<td>' + data.radio_measurements[i].z + '</td>' +
+        '<td>' + data.radio_measurements[i].rm + '</td>' +
+        '<td>' + data.radio_measurements[i].rm_err + '</td>' +
+        '<td>' + data.radio_measurements[i].fluence + '</td>' +
+        '<td>' + data.radio_measurements[i].fluence_err + '</td>' +
+        '<td>' + data.radio_measurements[i].flux + '</td>' +
+        '<td>' + data.radio_measurements[i].flux_err + '</td>' +
       '</tr>';
     }
     return $(child_table).toArray();
@@ -90,13 +111,22 @@
         { data: 'ra_pos_error' },
         { data: 'dec_dms' },
         { data: 'dec_pos_error' },
-        { data: 'source' },
-        { data: 'datetime' },
         { data: 'dm' },
+        { data: 'dm_err' },
+        { data: 'source' },
+        { data: 'version' },
+        { data: 'datetime' },
         { data: 'sn' },
         { data: 'width' },
+        { data: 'z' },
+        { data: 'rm' },
+        { data: 'rm_err' },
+        { data: 'fluence' },
+        { data: 'fluence_err' },
+        { data: 'flux' },
+        { data: 'flux_err' },
       ],
-      order: [[1, 'asc']],
+      order: [[1, 'desc']],
     });
 
     // Add event listener for opening and closing details
