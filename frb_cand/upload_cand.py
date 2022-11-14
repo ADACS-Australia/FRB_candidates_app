@@ -7,7 +7,7 @@ import json
 import yaml
 import sys
 
-from astropy.coordinates import Angle
+from astropy.coordinates import SkyCoord
 import astropy.units as u
 
 import logging
@@ -82,17 +82,17 @@ def radio_measurement_upload(id, yaml_path):
     with open(yaml_path, 'r') as file:
         frb_dict = yaml.safe_load(file)
 
-    # convert coord to degrees
-    # coord = SkyCoord(frb_dict["ra_hms"], frb_dict["dec_hms"], unit=(u.hour, u.deg))
+    # Create skycoord object for future conversions
+    coord = SkyCoord(frb_dict["ra"], frb_dict["dec"], unit=(u.deg, u.deg))
 
     # Required data
     data = {
         "frb": id,
         "ra": frb_dict["ra"],
         "dec": frb_dict["dec"],
-        # convert from deg to hms or dms
-        "ra_hms":  Angle(frb_dict["ra"], unit=u.deg).to_string(unit=u.hour),
-        "dec_dms": Angle(frb_dict["dec"], unit=u.deg).to_string(unit=u.deg),
+        # Convert from deg to hms or dms
+        "ra_hms":  coord.ra.to_string(unit=u.hour),
+        "dec_dms": coord.dec.to_string(unit=u.deg),
         "ra_pos_error":  frb_dict["ra_err"],
         "dec_pos_error": frb_dict["dec_err"],
         "source": frb_dict["source"],
@@ -103,6 +103,9 @@ def radio_measurement_upload(id, yaml_path):
         "width": frb_dict["width"],
         "flux": frb_dict["flux"],
         "flux_err": frb_dict["flux_err"],
+        # Convert to Galactic coordinates
+        "gl":  coord.galactic.l.deg,
+        "gb": coord.galactic.b.deg,
     }
     # Check for optional data
     if "z" in frb_dict.keys():

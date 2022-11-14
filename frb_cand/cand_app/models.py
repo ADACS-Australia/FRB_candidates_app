@@ -23,6 +23,7 @@ POS_SOURCE_CHOICES = (
 )
 
 class RadioMeasurement(models.Model):
+    id = models.AutoField(primary_key=True)
     frb = models.ForeignKey(
         FRBEvent,
         to_field="id",
@@ -36,6 +37,8 @@ class RadioMeasurement(models.Model):
     dec_dms = models.CharField(max_length=64, verbose_name="Declination (DMS)")
     ra_pos_error  = models.FloatField(verbose_name="Right Acension Error (deg)")
     dec_pos_error = models.FloatField(verbose_name="Declination Error (deg)")
+    gl = models.FloatField(verbose_name="Galactic Longitude (deg)")
+    gb = models.FloatField(verbose_name="Galactic Latitude (deg)")
 
     datetime = models.DateTimeField(auto_now_add=True, blank=True, help_text="The time that the measurement was uploaded (UTC).")
     source = models.CharField(max_length=3, choices=POS_SOURCE_CHOICES, help_text="The source (telescope pipeline) that was used to calculate the candidate position.")
@@ -76,3 +79,15 @@ class EventRating(models.Model):
     )
     datetime = models.DateTimeField(auto_now_add=True, blank=True)
     rating = models.BooleanField(default=False)
+
+
+class VOEvent(models.Model):
+    id = models.AutoField(primary_key=True)
+    radio_measurement = models.ForeignKey(
+        RadioMeasurement,
+        to_field="id",
+        verbose_name="FRB Radio Measurement",
+        help_text="The measurement that created this VOEvent",
+        on_delete=models.CASCADE,
+    )
+    xml_packet = models.CharField(max_length=10000)
