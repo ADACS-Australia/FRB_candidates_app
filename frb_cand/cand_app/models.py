@@ -91,3 +91,4 @@ class VOEvent(models.Model):
         on_delete=models.CASCADE,
     )
     xml_packet = models.CharField(max_length=10000)
+    comet_log  = models.CharField(max_length=10000)
