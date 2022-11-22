@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class FRBEvent(models.Model):
     id = models.AutoField(primary_key=True)
     tns_name = models.CharField(max_length=64, blank=True, null=True, help_text="The name of the FRB from the Transient naming system.")

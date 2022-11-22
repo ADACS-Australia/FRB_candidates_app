@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
-import os
 import argparse
-import requests
 import json
-import yaml
+import logging
+import os
 import sys
 
-from astropy.coordinates import SkyCoord
 import astropy.units as u
+import requests
+import yaml
+from astropy.coordinates import SkyCoord
 
-import logging
 logger = logging.getLogger(__name__)
 
 SYSTEM_ENV = os.environ.get('SYSTEM_ENV', None)

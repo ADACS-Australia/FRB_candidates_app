@@ -1,21 +1,20 @@
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from django.core.paginator import Paginator, InvalidPage
-from django.core.serializers.json import DjangoJSONEncoder
-from django.conf import settings
+import json
+import logging
+import time
 
+import requests
+from decouple import config
+from django.conf import settings
+from django.core.paginator import InvalidPage, Paginator
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from . import models, serializers
 
-import json
-import requests
-from decouple import config
-import time
-
-import logging
 logger = logging.getLogger(__name__)
 
 SLACK_WEBHOOK=config("SLACK_WEBHOOK")

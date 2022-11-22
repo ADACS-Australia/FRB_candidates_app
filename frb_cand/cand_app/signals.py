@@ -1,13 +1,13 @@
+import logging
+import subprocess
+
+import voeventparse as vp
 from django.db.models.signals import post_save
-from django.dispatch import receiver, Signal
+from django.dispatch import Signal, receiver
 
 from .models import FRBEvent, RadioMeasurement, VOEvent
 from .views import slack_event_post, submit_frb_to_tns
 
-import voeventparse as vp
-import subprocess
-
-import logging
 logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=FRBEvent)
