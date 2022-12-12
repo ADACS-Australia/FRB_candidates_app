@@ -1,4 +1,4 @@
-Welcome to ASKAP/CRAFT FRB Candidate Classifier's documentation!
+Welcome to ASKAP/CRAFT FRB Candidate Classifier's Documentation!
 ================================================================
 
 .. toctree::
@@ -15,3 +15,9 @@ Welcome to ASKAP/CRAFT FRB Candidate Classifier's documentation!
    database_installation
    webapp_installation
    running_server
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Software Developer Documentation:
+
+   developer
