@@ -302,10 +302,10 @@ def submit_frb_to_tns(id):
                             "filter_value": 1,
                             "instrument_value": 1,
                             "snr": radio_measurement.sn,
-                            "ref_freq": 1271.5,
-                            "inst_bandwidth": 336,
-                            "channels_no": 336,
-                            "sampling_time": 1.182,
+                            "ref_freq": frb_event.observation.centre_frequency,
+                            "inst_bandwidth": frb_event.observation.bandwidth,
+                            "channels_no": frb_event.observation.nchan,
+                            "sampling_time": frb_event.observation.sampling_time,
                         }
                     }
                 }
