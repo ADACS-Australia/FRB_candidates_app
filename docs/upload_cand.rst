@@ -1,3 +1,5 @@
+.. _upload-cand:
+
 Uploading FRB Events
 ====================
 
@@ -7,11 +9,11 @@ Running the Upload Script
 To upload your FRB events and follow up measurements you can use `this <https://github.com/ADACS-Australia/FRB_candidates_app/blob/main/frb_cand/upload_cand.py>`_ python script.
 To use it you must set the environment variables `FRB_USER` and `FRB_PASS` which is your username and password for the `FRB web app <https://frb-classifier.duckdns.org/>`_ account.
 
-For the first detection/measurement of the FRB event, you can use a command like the following:
+For the first detection/measurement of the FRB event, you can upload the radio measurement and observation data with a command like the following:
 
 .. code-block::
 
-    python upload_cand.py --first --radio_yaml example.yaml
+    python upload_cand.py --first --radio_yaml radio_example.yaml --observation_yaml observation_example.yaml
 
 
 Which will output an ID like so:
@@ -26,12 +28,14 @@ To upload further measurements, use the update option like so:
 
 .. code-block::
 
-    python upload_cand.py --update 3 --radio_yaml example.yaml
+    python upload_cand.py --update 3 --radio_yaml radio_example.yaml
+
+Note that you don't need the observation YAML after the first detection.
 
 Radio Measurement YAML Format
 -----------------------------
 
-Here is an example of what the YAML can look like
+Here is an example of what the radio measurement YAML can look like
 
 .. code-block::
 
@@ -74,7 +78,6 @@ Here is an example of what the YAML can look like
     }
 
 
-#TODO NOTES: ra and dec error are redundant if eellipse is always used, what is cosmo used for? Where is theta measured from?
 
 Each of the keys:
 
@@ -157,7 +160,71 @@ Each of the keys:
         "cl": `float`, optional
             The confidence level of the error ellipse in percent. Default 68.0
         "theta": `float`
-            The angle in degrees
+            The angle in degrees from North clockwise
 
 "z": `boolean`, optional
     The redshift of the candidate
+
+
+Observation YAML Format
+-----------------------
+
+Here is an example of what the observation YAML can look like
+
+.. code-block::
+
+    {
+        "beam_semi_major_axis": 0.2,
+        "beam_semi_minor_axis": 0.3,
+        "beam_rotation_angle": 45,
+        "sampling_time": 0.1,
+        "bandwidth": 300,
+        "nchan": 3000,
+        "centre_frequency": 1400,
+        "npol": 2,
+        "bits_per_sample": 8,
+        "gain": 3,
+        "tsys": 50,
+        "backend": "Multibeam",
+        "beam": 1,
+    }
+
+
+"beam_semi_major_axis": `float`
+    The beam semi major axis in arcminutes.
+
+"beam_semi_minor_axis": `float`
+    The beam semi minor axis in arcminutes.
+
+"beam_rotation_angle": `int`
+    The beam rotation angle in degrees, clockwise from North.
+
+"sampling_time": `float`
+    The duration of each sample in ms.
+
+"bandwidth": `float`
+    The bandwidth in MHz.
+
+"nchan": `int`
+    The number of frequency channels.
+
+"centre_frequency": float`
+    The centre frequency in MHz.
+
+"npol": `int`
+    The number of antena polarisations.
+
+"bits_per_sample": `int`
+    The size in bits of each sample.
+
+"gain": `float`
+    The gain of telescope in K/Jy.
+
+"tsys": `float`
+    The system temperature in K.
+
+"backend": `string`
+    The name of the telescope backend being used ("Multibeam" for example).
+
+"beam": `int`
+    The beam number for multi beam receivers.
