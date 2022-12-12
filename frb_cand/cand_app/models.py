@@ -1,8 +1,36 @@
 from django.db import models
 
 
+class Observation(models.Model):
+    id = models.AutoField(primary_key=True)
+    beam_semi_major_axis = models.FloatField(verbose_name='Beam Semi-major Axis (arcminutes)')
+    beam_semi_minor_axis = models.FloatField(verbose_name='Beam Semi-minor Axis (arcminutes)')
+    beam_rotation_angle = models.FloatField(verbose_name='Beam Rotation Angle (degrees)')
+    sampling_time = models.FloatField(verbose_name='Sampling Time (ms)')
+    bandwidth = models.FloatField(verbose_name='Bandwidth (MHz)')
+    nchan = models.IntegerField(verbose_name='nchan')
+    centre_frequency = models.FloatField(verbose_name='Centre Frequency (MHz)')
+    npol = models.IntegerField(verbose_name='npol')
+    bits_per_sample = models.IntegerField(verbose_name='Bits Per Sample')
+    gain = models.FloatField(verbose_name='Gain (K/Jy)')
+    tsys = models.FloatField(verbose_name='Tsys (K)')
+    backend = models.CharField(verbose_name='Backend', max_length=128)
+    beam = models.IntegerField(
+        blank=True, null=True,
+        verbose_name='Beam Number',
+        help_text='Detection beam number if backend is a multi beam receiver'
+    )
+
+
 class FRBEvent(models.Model):
     id = models.AutoField(primary_key=True)
+    observation = models.ForeignKey(
+        Observation,
+        to_field="id",
+        verbose_name="Observation",
+        help_text="Observation that this FRB event was detected in.",
+        on_delete=models.CASCADE,
+    )
     tns_name = models.CharField(max_length=64, blank=True, null=True, help_text="The name of the FRB from the Transient naming system.")
     time_of_arrival = models.DateTimeField(blank=True, help_text="The time of arrival of the event as measured by the telescope in UTC")
     repeater = models.BooleanField(default=False, help_text="Is the FRB a repeater")
@@ -22,6 +50,7 @@ POS_SOURCE_CHOICES = (
     (MB, 'Multibeam'),
     (HT, 'High-time resolution pipleline'),
 )
+
 
 class RadioMeasurement(models.Model):
     id = models.AutoField(primary_key=True)
