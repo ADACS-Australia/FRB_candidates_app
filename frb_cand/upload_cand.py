@@ -29,11 +29,55 @@ class TokenAuth(requests.auth.AuthBase):
         return r
 
 
-def frbevent_upload(yaml_path):
+def observation_upload(yaml_path):
+    """Upload an observation for a FRB event to the database.
+
+    Parameters
+    ----------
+    yaml_path : `str`
+        The full path of the yaml file containing FRB data.
+    """
+    # Set up connection
+    session = requests.session()
+    session.auth = session.auth = (os.environ['FRB_USER'], os.environ['FRB_PASS'])
+    url = f'{BASE_URL}/observation_create/'
+
+    # Load yaml file
+    with open(yaml_path, 'r') as file:
+        frb_dict = yaml.safe_load(file)
+
+    # Required data
+    data = {
+        "beam_semi_major_axis": frb_dict["beam_semi_major_axis"],
+        "beam_semi_minor_axis": frb_dict["beam_semi_minor_axis"],
+        "beam_rotation_angle": frb_dict["beam_rotation_angle"],
+        "sampling_time": frb_dict["sampling_time"],
+        "bandwidth": frb_dict["bandwidth"],
+        "nchan": frb_dict["nchan"],
+        "centre_frequency": frb_dict["centre_frequency"],
+        "npol": frb_dict["npol"],
+        "bits_per_sample": frb_dict["bits_per_sample"],
+        "gain": frb_dict["gain"],
+        "tsys": frb_dict["tsys"],
+        "backend": frb_dict["backend"],
+        "beam": frb_dict["beam"],
+    }
+
+    r = session.post(
+        url,
+        data=data,
+    )
+    # Return the observation id that was just created
+    return json.loads(r.text)["id"]
+
+
+def frbevent_upload(observation_id, yaml_path):
     """Upload an FRB event to the database.
 
     Parameters
     ----------
+    observation_id : `int`
+        The ID of the observation ID to link this FRB event to.
     yaml_path : `str`
         The full path of the yaml file containing FRB data.
     """
@@ -46,6 +90,7 @@ def frbevent_upload(yaml_path):
     with open(yaml_path, 'r') as file:
         frb_dict = yaml.safe_load(file)
     data = {
+        "observation": observation_id,
         "time_of_arrival": frb_dict["time_of_arrival"],
         "repeater": frb_dict["repeater"],
     }
@@ -136,9 +181,11 @@ if __name__ == '__main__':
                         help='If this is the first detection of the FRB (will make a new FRB Event instead of using a previous ID).')
     parser.add_argument('-u', '--update', type=int,
                         help='The ID of the FRB to update with the latest measurements.')
+    parser.add_argument('-o', '--observation_yaml', type=str,
+                        help='Path to the yaml file containing FRB information.')
     parser.add_argument('-r', '--radio_yaml', type=str,
                         help='Path to the yaml file containing FRB information.')
-    parser.add_argument('-o', '--optical_yaml', type=str,
+    parser.add_argument('--optical_yaml', type=str,
                         help='Path to the yaml file containing FRB information.')
     parser.add_argument("-L", "--loglvl", type=str, choices=loglevels.keys(), default="INFO",
                         help="Logger verbosity level. Default: INFO",)
@@ -157,7 +204,11 @@ if __name__ == '__main__':
         if not args.radio_yaml:
             logger.error("No radio YAML included. Please use --radio_yaml to include it. Exiting.")
             sys.exit(1)
-        frb_event_id =  frbevent_upload(args.radio_yaml)
+        if not args.observation_yaml:
+            logger.error("No observation YAML included. Please use --observation_yaml to include it. Exiting.")
+            sys.exit(1)
+        observation_id = observation_upload(args.observation_yaml)
+        frb_event_id = frbevent_upload(observation_id, args.radio_yaml)
         print(frb_event_id)
         radio_measurement_upload(frb_event_id, args.radio_yaml)
     elif args.update:

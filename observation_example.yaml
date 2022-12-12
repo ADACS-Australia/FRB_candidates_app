@@ -1,0 +1,15 @@
+{
+    "beam_semi_major_axis": 0.2,
+    "beam_semi_minor_axis": 0.3,
+    "beam_rotation_angle": 45,
+    "sampling_time": 0.1,
+    "bandwidth": 300,
+    "nchan": 3000,
+    "centre_frequency": 1400,
+    "npol": 2,
+    "bits_per_sample": 8,
+    "gain": 3,
+    "tsys": 50,
+    "backend": "Multibeam",
+    "beam": 1,
+}

@@ -13,3 +13,9 @@ class RadioMeasurementSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RadioMeasurement
         fields = '__all__'
+
+
+class ObservationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Observation
+        fields = '__all__'

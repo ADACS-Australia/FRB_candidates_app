@@ -27,6 +27,7 @@ urlpatterns = [
     path('frbevent_table/',  views.frbevent_table),
     path('frbevent_details/<int:id>/', views.frbevent_details),
     path('radio_measurement_create/', views.radio_measurement_create),
+    path('observation_create/', views.observation_create),
     path('slack_get_rating/', views.slack_get_rating),
     path('trigger_pipeline/<int:id>/', views.trigger_pipeline),
 ]

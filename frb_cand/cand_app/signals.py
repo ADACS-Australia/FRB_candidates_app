@@ -36,6 +36,8 @@ def tns_trigger(sender, instance, **kwargs):
 
 
 def make_voevent(radio_measurement):
+    # Grab observation information
+    obs = radio_measurement.frb.observation
     # initialise event
     v = vp.Voevent(
         stream='frb-classifier.duckdns.org/CRAFT',
@@ -61,116 +63,113 @@ def make_voevent(radio_measurement):
     # What
 
     # observatory paramaters group
-    # TODO uncomment once this is recorded in the database
-    # beam_semi_major_axis = vp.Param(
-    #     name='beam_semi-major_axis',
-    #     value=str(),
-    #     unit='MM',
-    #     ucd='instr.beam;pos.errorEllipse;phys.angSize.smajAxis',
-    #     dataType='float',
-    # )
-    # beam_semi_minor_axis = vp.Param(
-    #     name='beam_semi-minor_axis',
-    #     value=str(),
-    #     unit='MM',
-    #     ucd='instr.beam;pos.errorEllipse;phys.angSize.sminAxis',
-    #     dataType='float',
-    # )
-    # beam_rotation_angle = vp.Param(
-    #     name='beam_rotation_angle',
-    #     value=str(),
-    #     unit='Degrees',
-    #     ucd='instr.beam;pos.errorEllipse;instr.offset',
-    #     dataType='float',
-    # )
-    # sampling_time = vp.Param(
-    #     name='sampling_time',
-    #     value=str(),
-    #     unit='ms',
-    #     ucd='time.resolution',
-    #     dataType='float',
-    # )
-    # bandwidth = vp.Param(
-    #     name='bandwidth',
-    #     value=str(),
-    #     unit='MHz',
-    #     ucd='instr.bandwidth',
-    #     dataType='float',
-    # )
-    # nchan = vp.Param(
-    #     name='nchan',
-    #     value=str(),
-    #     unit='None',
-    #     ucd='meta.number;em.freq;em.bin',
-    #     dataType='int',
-    # )
-    # centre_frequency = vp.Param(
-    #     name='centre_frequency',
-    #     value=str(),
-    #     unit='MHz',
-    #     ucd='em.freq;instr',
-    #     dataType='float',
-    # )
-    # npol = vp.Param(
-    #     name='npol',
-    #     value=str(),
-    #     unit='None',
-    #     dataType='int',
-    # )
-    # bits_per_sample = vp.Param(
-    #     name='bits_per_sample',
-    #     value=str(),
-    #     unit='None',
-    #     dataType='int',
-    # )
-    # gain = vp.Param(
-    #     name='gain',
-    #     value=str(),
-    #     unit='K/Jy',
-    #     dataType='float',
-    # )
-    # tsys = vp.Param(
-    #     name='tsys',
-    #     value=str(),
-    #     unit='K',
-    #     ucd='phot.antennaTemp',
-    #     dataType='float',
-    # )
-    # backend = vp.Param(
-    #     name='backend',
-    #     value=str(),
-    #     dataType='str',
-    # )
-    # beam = vp.Param(
-    #     name='beam',
-    #     value=str(),
-    #     dataType='int',
-    # )
-    # beam.Description = 'Detection beam number if backend is a multi beam receiver'
-    # v.What.append(
-    #     vp.Group(
-    #         params=[
-    #             beam_semi_major_axis,
-    #             beam_semi_minor_axis,
-    #             beam_rotation_angle,
-    #             sampling_time,
-    #             bandwidth,
-    #             nchan,
-    #             centre_frequency,
-    #             npol,
-    #             bits_per_sample,
-    #             gain,
-    #             tsys,
-    #             backend,
-    #             beam,
-    #         ],
-    #         name='observatory parameters'
-    #     )
-    # )
+    beam_semi_major_axis = vp.Param(
+        name='beam_semi-major_axis',
+        value=str(obs.beam_semi_major_axis),
+        unit='MM',
+        ucd='instr.beam;pos.errorEllipse;phys.angSize.smajAxis',
+        dataType='float',
+    )
+    beam_semi_minor_axis = vp.Param(
+        name='beam_semi-minor_axis',
+        value=str(obs.beam_semi_minor_axis),
+        unit='MM',
+        ucd='instr.beam;pos.errorEllipse;phys.angSize.sminAxis',
+        dataType='float',
+    )
+    beam_rotation_angle = vp.Param(
+        name='beam_rotation_angle',
+        value=str(obs.beam_rotation_angle),
+        unit='Degrees',
+        ucd='instr.beam;pos.errorEllipse;instr.offset',
+        dataType='float',
+    )
+    sampling_time = vp.Param(
+        name='sampling_time',
+        value=str(obs.sampling_time),
+        unit='ms',
+        ucd='time.resolution',
+        dataType='float',
+    )
+    bandwidth = vp.Param(
+        name='bandwidth',
+        value=str(obs.bandwidth),
+        unit='MHz',
+        ucd='instr.bandwidth',
+        dataType='float',
+    )
+    nchan = vp.Param(
+        name='nchan',
+        value=str(obs.nchan),
+        unit='None',
+        ucd='meta.number;em.freq;em.bin',
+        dataType='int',
+    )
+    centre_frequency = vp.Param(
+        name='centre_frequency',
+        value=str(obs.centre_frequency),
+        unit='MHz',
+        ucd='em.freq;instr',
+        dataType='float',
+    )
+    npol = vp.Param(
+        name='npol',
+        value=str(obs.npol),
+        unit='None',
+        dataType='int',
+    )
+    bits_per_sample = vp.Param(
+        name='bits_per_sample',
+        value=str(obs.bits_per_sample),
+        unit='None',
+        dataType='int',
+    )
+    gain = vp.Param(
+        name='gain',
+        value=str(obs.gain),
+        unit='K/Jy',
+        dataType='float',
+    )
+    tsys = vp.Param(
+        name='tsys',
+        value=str(obs.tsys),
+        unit='K',
+        ucd='phot.antennaTemp',
+        dataType='float',
+    )
+    backend = vp.Param(
+        name='backend',
+        value=str(obs.backend),
+        dataType='string',
+    )
+    beam = vp.Param(
+        name='beam',
+        value=str(obs.beam),
+        dataType='int',
+    )
+    beam.Description = 'Detection beam number if backend is a multi beam receiver'
+    v.What.append(
+        vp.Group(
+            params=[
+                beam_semi_major_axis,
+                beam_semi_minor_axis,
+                beam_rotation_angle,
+                sampling_time,
+                bandwidth,
+                nchan,
+                centre_frequency,
+                npol,
+                bits_per_sample,
+                gain,
+                tsys,
+                backend,
+                beam,
+            ],
+            name='observatory parameters'
+        )
+    )
 
     # Event paramater group
-    print(radio_measurement.dm)
-    print(type(radio_measurement.dm))
     dm = vp.Param(
         name='dm',
         value=str(radio_measurement.dm),

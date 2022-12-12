@@ -83,6 +83,18 @@ def radio_measurement_create(request):
     return Response(radio_measurement.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def observation_create(request):
+    # Create an observation
+    observation = serializers.ObservationSerializer(data=request.data)
+    if observation.is_valid():
+        observation.save()
+        return JsonResponse({"data":observation.data, "id":observation.data["id"]}, status=status.HTTP_201_CREATED)
+    logger.debug(request.data)
+    logger.error(observation.errors)
+    return Response(observation.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 def frbevent_table(request):
     # Grab events
     frb_events = models.FRBEvent.objects.all()
@@ -316,6 +328,7 @@ def submit_frb_to_tns(id):
     response = requests.post(json_url, headers=headers, data=json_data)
     if response.status_code == 200:
         print("The report was sent to the TNS.\n")
+        print(response.text)
         json_data = response.json()
         id_report = json_data['data']['report_id']
         print(f"Report ID = {id_report}\n")
