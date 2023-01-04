@@ -9,7 +9,7 @@ nginx errors are in
 
    tail -f cat /var/log/nginx/error.log
 
-All commands assume you're in the webapp_tracet sub directory. You can see the output of the server with
+All commands assume you're in the frb_cand sub directory. You can see the output of the server with
 
 .. code-block::
 
@@ -64,8 +64,6 @@ Larger updates may need a combination of the following commands
    uwsgi --stop /tmp/project-master.pid
    # Check for new dependent software
    pip install -r requirements.txt
-   # install updates to the tracet python module
-   pip instal ..
    # Check for new static files
    python manage.py collectstatic
    # Make any required changes to the backend database
